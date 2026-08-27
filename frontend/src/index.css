@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-void text-ink-hi font-sans antialiased;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(76,217,224,0.06), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(242,180,65,0.05), transparent 40%);
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: rgba(76,217,224,0.25);
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #324055 transparent;
+  }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-thumb { background: #243040; border-radius: 8px; }
+
+  :focus-visible {
+    outline: 2px solid #4CD9E0;
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .num {
+    @apply font-mono tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: placement_scheduler
+      MYSQL_USER: scheduler
+      MYSQL_PASSWORD: scheduler
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql+pymysql://scheduler:scheduler@mysql:3306/placement_scheduler
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000,http://localhost:8080
+      NUM_DAYS: 4
+      DAY_START_MIN: 540
+      DAY_END_MIN: 1080
+      SLOT_GRANULARITY_MIN: 5
+      NUM_ROOMS: 20
+      NUM_STUDENTS: 800
+      NUM_COMPANIES: 35
+      MAX_SPILLOVER_MIN: 60
+      RANDOM_SEED: 42
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
