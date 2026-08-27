@@ -15,6 +15,8 @@ system a coordinator would actually run from a laptop on the day.
                                       └──────────────┘
 ```
 
+**Read the full technical breakdown and architectural decisions here:** [Approach and Technical Defense](./Approach_and_Defense.md)
+
 ---
 
 ## Quick start
